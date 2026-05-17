@@ -89,12 +89,40 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
     mod.method("OscBundle_fromBytes", &OscBundle::fromBytes);
     mod.method("OscBundle_isBundle", &OscBundle::isBundle);
 
+    using OscSenderDestination = OscSender::Destination;
+    mod.add_type<OscSenderDestination>("OscSenderDestination")
+        .constructor<>()
+        .method("host", [](OscSenderDestination& d){ return d.host; })
+        .method("host!", [](OscSenderDestination& d, const std::string& h){ return d.host = h; })
+        .method("port", [](OscSenderDestination& d){ return d.port; })
+        .method("port!", [](OscSenderDestination& d, int p){ return d.port = p; })
+        ;
+
     mod.add_type<OscSender>("OscSender")
         .constructor<>()
+        .method("connect", &OscSender::connect)
+        .method("disconnect", [](OscSender& o){ o.disconnect(); })
+        .method("disconnect", [](OscSender& o, const std::string& h, int p){ o.disconnect(h, p); })
+        .method("setup", &OscSender::setup)
+        .method("close", &OscSender::close)
+        .method("send", [](OscSender& o, const OscMessage& m){ o.send(m); })
+        .method("send", [](OscSender& o, const OscBundle& b){ o.send(b); })
+        .method("sendTo", [](OscSender& o, const std::string& h, int p, const OscMessage& m){ o.sendTo(h,p,m); })
+        .method("sendTo", [](OscSender& o, const std::string& h, int p, const OscBundle& b){ o.sendTo(h,p,b); })
+        .method("getConnectedAddresses", &OscSender::getConnectedAddresses)
+        .method("isConnected", &OscSender::isConnected)
         ;
 
     mod.add_type<OscReceiver>("OscReceiver")
         .constructor<>()
+        .method("setup", &OscReceiver::setup)
+        .method("close", &OscReceiver::close)
+        .method("getPort", &OscReceiver::getPort)
+        .method("isListening", &OscReceiver::isListening)
+        .method("hasNewMessage", &OscReceiver::hasNewMessage)
+        .method("getNextMessage", &OscReceiver::getNextMessage)
+        .method("setBufferSize", &OscReceiver::setBufferSize)
+        .method("getBufferSize", &OscReceiver::getBufferSize)
         ;
 
     // //  NOTE: This line comment is left for future usage
