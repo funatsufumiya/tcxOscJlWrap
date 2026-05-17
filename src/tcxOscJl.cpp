@@ -67,10 +67,27 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
         .method("clear", &OscMessage::clear)
         ;
 
+    mod.method("OscMessage_fromBytes", &OscMessage::fromBytes);
+
     mod.add_type<OscBundle>("OscBundle")
         .constructor<>()
         .constructor<const OscBundle&>()
+        .constructor<uint64_t>()
+        .method("setTimetag", &OscBundle::setTimetag)
+        .method("getTimetag", &OscBundle::getTimetag)
+        .method("addMessage", &OscBundle::addMessage)
+        .method("addBundle", &OscBundle::addBundle)
+        .method("getElementCount", &OscBundle::getElementCount)
+        .method("isBundle", &OscBundle::isBundle)
+        .method("isMessage", &OscBundle::isMessage)
+        .method("getMessageAt", &OscBundle::getMessageAt)
+        .method("getBundleAt", &OscBundle::getBundleAt)
+        .method("toBytes", &OscBundle::toBytes)
+        .method("clear", &OscBundle::clear)
         ;
+
+    mod.method("OscBundle_fromBytes", &OscBundle::fromBytes);
+    mod.method("OscBundle_isBundle", &OscBundle::isBundle);
 
     mod.add_type<OscSender>("OscSender")
         .constructor<>()
